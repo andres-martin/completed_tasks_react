@@ -11,7 +11,8 @@ class App extends Component {
         { id: 2, name: "Hacer la cama", done: true },
         { id: 3, name: "Leer un rato", done: false }
       ],
-      newTask: ''
+      newTask: '',
+      submitted: true
     }
 
   }
@@ -21,32 +22,55 @@ class App extends Component {
         <div className="list">
           <h3>Por hacer:</h3>
           <ul className="todo">
-            {this.state.tasks.map((task) => <li key={task.id}>{task.name}</li>)}
+            {this.state.tasks.map((task) => <li key={task.id}
+              onClick={() => this.completedTask(task.id)}
+              className={task.done ? 'done' : null}
+            >{task.name}</li>)}
           </ul>
           <form onSubmit={this.submitTask}>
             <input type="text" id="new-task" onChange={this.addTask}
+              className={this.state.submitted ? '' : 'error'}
               placeholder="Ingresa una tarea y oprime Enter" value={this.state.newTask} />
           </form>
         </div>
       </div>
     )
   }
+  // adds a new task, ste the state of newTask prop to the targeted value
   addTask = e => {
     this.setState({ newTask: e.target.value });
   };
 
+  // completes the task changing the prop done of each task to true if clicked on it 
+  completedTask = (id) => {
+    const tasksUpdated = this.state.tasks.map(task => {
+      if (task.id === id) {
+        task.done = !task.done
+      }
+      return task
+    })
+    this.setState({ tasks: tasksUpdated })
+  }
 
+  // submits the task it value has content nad changes the state of submitted prop
   submitTask = (e) => {
     e.preventDefault();
     if (this.state.newTask !== '') {
       this.setState(state => {
-        const newTask = { id: 4, name: this.state.newTask, done: false }
+        const newTask = {
+          id: this.state.tasks.length + 1,
+          name: this.state.newTask,
+          done: false
+        }
         const tasks = [...state.tasks, newTask];
+        state.submitted = true
         return {
           tasks,
           newTask: ''
         }
       });
+    } else {
+      this.setState({ submitted: false })
     }
   }
 }
