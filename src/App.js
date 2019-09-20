@@ -13,6 +13,7 @@ class App extends Component {
       ],
       newTask: ''
     }
+
   }
   render() {
     return (
@@ -20,14 +21,33 @@ class App extends Component {
         <div className="list">
           <h3>Por hacer:</h3>
           <ul className="todo">
-            {this.state.tasks.map((task, index) => <li key={task.id}>{task.name}</li>)}
+            {this.state.tasks.map((task) => <li key={task.id}>{task.name}</li>)}
           </ul>
-          <form>
-            <input type="text" id="new-task" placeholder="Ingresa una tarea y oprime Enter" value={this.state.newTask} />
+          <form onSubmit={this.submitTask}>
+            <input type="text" id="new-task" onChange={this.addTask}
+              placeholder="Ingresa una tarea y oprime Enter" value={this.state.newTask} />
           </form>
         </div>
       </div>
     )
+  }
+  addTask = e => {
+    this.setState({ newTask: e.target.value });
+  };
+
+
+  submitTask = (e) => {
+    e.preventDefault();
+    if (this.state.newTask !== '') {
+      this.setState(state => {
+        const newTask = { id: 4, name: this.state.newTask, done: false }
+        const tasks = [...state.tasks, newTask];
+        return {
+          tasks,
+          newTask: ''
+        }
+      });
+    }
   }
 }
 
